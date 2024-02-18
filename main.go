@@ -1,45 +1,31 @@
 package main
 
 import (
-	"context"
 	"fmt"
-	"time"
-
-	"golang.design/x/clipboard"
+	ClipboardService "main/services"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 func main() {
-
-	// Init returns an error if the package is not ready for use.
-	err := clipboard.Init()
-	if err != nil {
-		panic(err)
-	}
-
-	ticker := time.NewTicker(500 * time.Millisecond)
-
-    go func() {
-        for t := range ticker.C {
+	fmt.Println(("Starting the clipboard service"))
+	ClipboardService.SetupRefresher()
+			/*
             fmt.Println("Tick at", t)
 			fmt.Println(clipboard.Read(clipboard.FmtText))
 			fmt.Println(clipboard.Read(clipboard.FmtImage))
-        }
-    }()
+			*/
+	WaitAndHandleShutdown()
+}
 
-	var test = clipboard.Read(clipboard.FmtText)
+func WaitAndHandleShutdown() {
+	// Setting up signal handling for graceful shutdown
+	signals := make(chan os.Signal, 1)
+	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
 
-	cbTextChannel := clipboard.Watch(context.TODO(), clipboard.FmtText)
-	for data := range cbTextChannel {
-		// print out clipboard data whenever it is changed
-		println("clipboard changed text", string(data))
-	}
-
-
-	cbImageChannel := clipboard.Watch(context.TODO(), clipboard.FmtImage)
-	for data := range cbImageChannel {
-		// print out clipboard data whenever it is changed
-		println("clipboard changed image", data)
-	}
-
-	fmt.Println(test)
+	// Block until a signal is received
+	sig := <-signals
+	fmt.Println("Received signal:", sig)
+	fmt.Println("Shutting down gracefully...")
 }
