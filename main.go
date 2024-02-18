@@ -1,22 +1,59 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	ClipboardService "main/services"
+	ClipboardHelper "main/Helpers/Clipboard"
+	FtpHelper "main/Helpers/Ftp"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/google/uuid"
+	"golang.design/x/clipboard"
 )
 
 func main() {
-	fmt.Println(("Starting the clipboard service"))
-	ClipboardService.SetupRefresher()
-			/*
-            fmt.Println("Tick at", t)
-			fmt.Println(clipboard.Read(clipboard.FmtText))
-			fmt.Println(clipboard.Read(clipboard.FmtImage))
-			*/
-	WaitAndHandleShutdown()
+	//fmt.Println(("Starting the clipboard service"))
+	
+	//ClipboardService.SetupRefresher()
+
+	// Define command-line flags
+	server := flag.String("server", "", "The address of the FTP server")
+	username := flag.String("username", "", "The username for authentication")
+	password := flag.String("password", "", "The password for authentication")
+	port := flag.Int("port", 21, "The port on which the FTP server is running (default is 21)")
+	folder := flag.String("folder", "", "The folder to upload the file to")
+	webServer := flag.String("webServer", "", "The web server the files will be hosted on")
+
+	// Parse the flags
+	flag.Parse()
+
+	// Simple validation to ensure required flags are provided
+	if *server == "" || *username == "" || *password == "" {
+		fmt.Println("server, username, and password flags are required")
+		flag.PrintDefaults() // Print usage information
+		return
+	}
+
+	// Here you would typically use the provided information to connect to the FTP server.
+	// For the sake of this example, we'll just print the connection data.
+	fmt.Printf("Connecting to FTP server at %s:%d...\n", *server, *port)
+	fmt.Printf("Username: %s, Password: %s\n", *username, *password)
+
+	data := ClipboardHelper.GetClipboardData()
+
+	if data != nil {
+		// guid name of file
+		var fileName string = uuid.New().String()
+		FtpHelper.UploadFile(*server, *username, *password, *port, *folder, *data, fileName)
+
+		fmt.Println("File uploaded successfully")
+
+		clipboard.Write(clipboard.FmtText, []byte(*webServer + "/" + fileName))
+	}
+	
+	//WaitAndHandleShutdown()
 }
 
 func WaitAndHandleShutdown() {
