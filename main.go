@@ -45,12 +45,17 @@ func main() {
 	data := ClipboardHelper.GetClipboardData()
 
 	if data != nil {
-		// guid name of file
-		// We need to account for file extensions
 		if &fileName == nil || fileName == "" {
 			fileName = uuid.New().String()
 		}
 		fileName = fileName + data.Ext
+		if (data.Type == "text") {
+			fileName = fileName + ".txt"
+		} else if (data.Type == "image") {
+			fileName = fileName + ".png"
+		}
+
+		
 		FtpHelper.UploadFile(*server, *username, *password, *port, *folder, *data, fileName)
 
 		fmt.Println("File uploaded successfully")

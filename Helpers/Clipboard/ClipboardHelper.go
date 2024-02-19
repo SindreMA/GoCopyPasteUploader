@@ -13,14 +13,14 @@ func hasFileExtension(s string) bool {
 	return lastDotIndex > -1 && lastDotIndex < len(s)-1 && len(s)-lastDotIndex-1 <= 20
 }
 
-func HandleFileClipboard() *Types.IClipboard {
+func HandleFileClipboard(textClipboard string) *Types.IClipboard {
 	fileClipboard := GetFileClipboard()
 
 	if fileClipboard != "" {
 		return &Types.IClipboard {
 			Type: Types.File,
 			Data: string(fileClipboard),
-			Ext: GetFileExtension(fileClipboard),
+			Ext: GetFileExtension(textClipboard),
 		}
 	}
 
@@ -35,7 +35,7 @@ func GetClipboardData() *Types.IClipboard {
 		textClipboardString := string(textClipboard)
 
 		if hasFileExtension(textClipboardString) {
-			fileClipboard := HandleFileClipboard()
+			fileClipboard := HandleFileClipboard(textClipboardString)
 
 			if fileClipboard != nil {
 				return fileClipboard
@@ -58,7 +58,7 @@ func GetClipboardData() *Types.IClipboard {
 		}
 	}
 
-	fileClipboard := HandleFileClipboard()
+	fileClipboard := HandleFileClipboard(string(textClipboard))
 
 	if fileClipboard != nil {
 		return fileClipboard
