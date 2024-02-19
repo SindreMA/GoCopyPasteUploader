@@ -20,6 +20,7 @@ func HandleFileClipboard() *Types.IClipboard {
 		return &Types.IClipboard {
 			Type: Types.File,
 			Data: string(fileClipboard),
+			Ext: GetFileExtension(fileClipboard),
 		}
 	}
 
@@ -64,4 +65,9 @@ func GetClipboardData() *Types.IClipboard {
 	}
 	
 	return nil
+}
+
+func GetFileExtension(s string) string {
+	lastDotIndex := strings.LastIndex(s, ".")
+	return s[lastDotIndex:]
 }

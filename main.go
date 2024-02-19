@@ -50,6 +50,7 @@ func main() {
 		if &fileName == nil || fileName == "" {
 			fileName = uuid.New().String()
 		}
+		fileName = fileName + data.Ext
 		FtpHelper.UploadFile(*server, *username, *password, *port, *folder, *data, fileName)
 
 		fmt.Println("File uploaded successfully")

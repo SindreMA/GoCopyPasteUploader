@@ -11,4 +11,5 @@ const (
 type IClipboard struct {
 	Type ClipboardType
 	Data string // text, base64
+	Ext  string // file extension
 }
