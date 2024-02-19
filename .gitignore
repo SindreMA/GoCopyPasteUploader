@@ -1,0 +1,10 @@
+*main*
+*main.exe*
+*.vscode*
+
+./main
+main
+./main.exe
+main.exe
+./.vscode
+.vscode
