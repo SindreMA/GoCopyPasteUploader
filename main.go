@@ -25,6 +25,7 @@ func main() {
 	port := flag.Int("port", 21, "The port on which the FTP server is running (default is 21)")
 	folder := flag.String("folder", "", "The folder to upload the file to")
 	webServer := flag.String("webServer", "", "The web server the files will be hosted on")
+	fileName := *flag.String("fileName", "", "The name of the file")
 
 	// Parse the flags
 	flag.Parse()
@@ -45,7 +46,10 @@ func main() {
 
 	if data != nil {
 		// guid name of file
-		var fileName string = uuid.New().String()
+		// We need to account for file extensions
+		if &fileName == nil || fileName == "" {
+			fileName = uuid.New().String()
+		}
 		FtpHelper.UploadFile(*server, *username, *password, *port, *folder, *data, fileName)
 
 		fmt.Println("File uploaded successfully")
