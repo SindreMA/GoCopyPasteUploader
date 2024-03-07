@@ -36,12 +36,7 @@ func main() {
 		flag.PrintDefaults() // Print usage information
 		return
 	}
-
-	// Here you would typically use the provided information to connect to the FTP server.
-	// For the sake of this example, we'll just print the connection data.
-	fmt.Printf("Connecting to FTP server at %s:%d...\n", *server, *port)
-	fmt.Printf("Username: %s, Password: %s\n", *username, *password)
-
+	
 	data := ClipboardHelper.GetClipboardData()
 
 	if data != nil {
